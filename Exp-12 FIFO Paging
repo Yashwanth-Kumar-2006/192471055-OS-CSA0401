@@ -1,54 +1,26 @@
 #include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
-
-#define N 5
-
-pthread_mutex_t forks[N];
-
-void* philosopher(void* num) {
-    int id = *((int*)num);
-    int left = id;
-    int right = (id + 1) % N;
-
-    for(int i=0; i<3; i++) { 
-        printf("Philosopher %d is thinking.\n", id);
-        sleep(1);
-        if(left < right) {
-            pthread_mutex_lock(&forks[left]);
-            pthread_mutex_lock(&forks[right]);
-        } else {
-            pthread_mutex_lock(&forks[right]);
-            pthread_mutex_lock(&forks[left]);
-        }
-
-        printf("Philosopher %d is eating.\n", id);
-        sleep(2);
-
-        pthread_mutex_unlock(&forks[left]);
-        pthread_mutex_unlock(&forks[right]);
-        printf("Philosopher %d finished eating.\n", id);
-    }
-    return NULL;
-}
-
 int main() {
-    pthread_t ph[N];
-    int ids[N];
-
-    for(int i=0; i<N; i++)
-        pthread_mutex_init(&forks[i], NULL);
-
-    for(int i=0; i<N; i++) {
-        ids[i] = i;
-        pthread_create(&ph[i], NULL, philosopher, &ids[i]);
+    int i, j, n, f, pages[50], frame[10], count = 0, flag, k = 0;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+    printf("Enter reference string: ");
+    for (i = 0; i < n; i++) scanf("%d", &pages[i]);
+    printf("Enter number of frames: ");
+    scanf("%d", &f);
+    for (i = 0; i < f; i++) frame[i] = -1;
+    printf("Page\tFrames\n");
+    for (i = 0; i < n; i++) {
+        flag = 0;
+        for (j = 0; j < f; j++)
+            if (frame[j] == pages[i]) flag = 1;
+        if (flag == 0) {
+            frame[k] = pages[i];
+            k = (k + 1) % f;
+            count++;
+        }
+        printf("%d\t", pages[i]);
+        for (j = 0; j < f; j++) printf("%d ", frame[j]);
+        printf("\n");
     }
-
-    for(int i=0; i<N; i++)
-        pthread_join(ph[i], NULL);
-
-    for(int i=0; i<N; i++)
-        pthread_mutex_destroy(&forks[i]);
-
-    return 0;
+    printf("Page Faults = %d\n", count);
 }
