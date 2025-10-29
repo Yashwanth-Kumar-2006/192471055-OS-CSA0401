@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int main() {
+    int m,n; 
+    printf("Blocks, Processes: "); 
+    scanf("%d %d",&m,&n);
+    int b[m],p[n],bf[m],wf[m],ff[m];
+    printf("Block sizes: "); for(int i=0;i<m;i++){scanf("%d",&b[i]); bf[i]=wf[i]=ff[i]=b[i];}
+    printf("Process sizes: "); for(int i=0;i<n;i++) scanf("%d",&p[i]);
+
+    printf("\nFirst Fit:\nP\tBlock\n");
+    for(int i=0;i<n;i++){
+        int found=-1;
+        for(int j=0;j<m;j++) if(ff[j]>=p[i]){found=j; ff[j]-=p[i]; break;}
+        printf("P%d\t%d\n",i+1,found+1);
+    }
+
+    printf("\nBest Fit:\nP\tBlock\n");
+    for(int i=0;i<n;i++){
+        int best=-1;
+        for(int j=0;j<m;j++) if(bf[j]>=p[i]&&(best==-1||bf[j]<bf[best])) best=j;
+        if(best!=-1) bf[best]-=p[i];
+        printf("P%d\t%d\n",i+1,best+1);
+    }
+
+    printf("\nWorst Fit:\nP\tBlock\n");
+    for(int i=0;i<n;i++){
+        int worst=-1;
+        for(int j=0;j<m;j++) if(wf[j]>=p[i]&&(worst==-1||wf[j]>wf[worst])) worst=j;
+        if(worst!=-1) wf[worst]-=p[i];
+        printf("P%d\t%d\n",i+1,worst+1);
+    }
+
+    return 0;
+}
